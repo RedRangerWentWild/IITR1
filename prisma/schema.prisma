@@ -1,0 +1,58 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                 String          @id @default(uuid())
+  email              String          @unique
+  googleAccessToken  String?
+  googleRefreshToken String?
+  tokenExpiresAt     BigInt?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  userToneProfile    Json?
+  emailCheckFrequency Int            @default(18)
+
+  conversionLogs     ConversionLog[]
+  userMetrics        UserMetrics[]
+}
+
+model ConversionLog {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  draftId          String
+  userInput        String
+  recipientEmail   String   // Added for querying history
+  aiOutput         String
+  detectedTone     String
+  previewShown     Boolean
+  userEdited       Boolean
+  editsApplied     String?
+  sentSuccessfully Boolean
+  replyTime        Int?
+  createdAt        DateTime @default(now())
+}
+
+model UserMetrics {
+  id                  String   @id @default(uuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id])
+  date                DateTime @db.Date
+  repliesAttempted    Int      @default(0)
+  repliesCompleted    Int      @default(0)
+  avgReplyTimeSeconds Float?
+  draftAbandonmentCount Int    @default(0)
+  stressLevel         Int?
+  cognitiveLoadTLX    Int?
+  mobileReplies       Int      @default(0)
+  emailCheckCount     Int      @default(0)
+  createdAt           DateTime @default(now())
+
+  @@unique([userId, date])
+}

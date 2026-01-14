@@ -1,0 +1,38 @@
+{
+    "manifest_version": 3,
+    "name": "EmailFlow - AI Email Assistant",
+    "version": "1.0",
+    "description": "Professionalize your email thoughts instantly with AI.",
+    "permissions": [
+        "storage",
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": [
+        "https://mail.google.com/*",
+        "http://localhost:3000/*"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": "icon.png"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://mail.google.com/*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "css": [
+                "content.css"
+            ]
+        }
+    ],
+    "icons": {
+        "128": "icon.png"
+    }
+}
